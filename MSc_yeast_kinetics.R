@@ -27,3 +27,38 @@ reshapedout <- array(c(out[,'Y'],out[,'Ng'],out[,'Nm'],out[,'Nn'],out[,'Nc']),di
 matplot(out[,'time'],reshapedout, type = "l", lty=1:1,lwd=2, xlab="Time (hours)",ylab = "Concentration (ng/ml)")
 
 
+# ====================================================================================================|
+# Parameter Estimation through inversion and JAGS below:
+# ====================================================================================================|
+
+
+# Note: Unfinished code - decided to focus on enhancing the mathematical model and rectifying these issues before exploring statistical inference
+N <- length(reshapedsampled_out)
+
+dat <- list("reshapedsampled_out" = y, "N" = N)
+jags.inits <- function() {list (a1=0.2125, a2=0.2245, a3=0.2649, b1=0.2340, b2=0.2790, b3=0.2117)}
+parameters <- c("a1", "a2", "a3", "b1", "b2", "b3")
+
+model_string = "
+  model {
+  ## Priors
+  a1 ~ dlnorm(0,0.2)
+  a2 ~ dlnorm(0,0.2)
+  a3 ~ dlnorm(0,0.2)
+  b1 ~ dlnorm(0,0.2)
+  b2 ~ dlnorm(0,0.2)
+  b3 ~ dlnorm(0,0.2)
+  
+  ## Structure
+  for (i in 1:N){
+  y[i] ~ dnorm( mu[i], tau )
+  mu[i] <- 
+
+  }
+}
+"
+
+model = jags.model(file = textConnection(model_string),
+                   data = dat,
+                   n.chains = 1,
+                   n.adapt = 1000)
